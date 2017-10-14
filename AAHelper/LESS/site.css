@@ -1,0 +1,16 @@
+﻿#app .contentBorder {
+  border: solid 1px #dddddd;
+  border-top: none;
+}
+#app #attacker {
+  background-color: cadetblue;
+}
+#app #defender {
+  background-color: indianred;
+}
+#app #techs {
+  background-color: lightgray;
+}
+#app .battleButton {
+  float: right;
+}
