@@ -16,8 +16,8 @@
         <h1>{{ message }}</h1>
         <ul class="nav nav-tabs">
             <li><a href="#home" data-toggle="tab">Home</a></li>
-            <li><a href="#turnOrder" data-toggle="tab">Menu 1</a></li>
-            <li class="active"><a href="#battleResolver" data-toggle="tab">Battle Resolver</a></li>
+            <li class="active"><a href="#turnOrder" data-toggle="tab">Turn Order</a></li>
+            <li><a href="#battleResolver" data-toggle="tab">Battle Resolver</a></li>
             <li><a href="#ggMates" data-toggle="tab">Menu 3</a></li>
         </ul>
 
@@ -26,11 +26,35 @@
                 <h3>HOME</h3>
                 <p>Some content.</p>
             </div>
-            <div id="turnOrder" class="tab-pane fade">
-                <h3>Menu 1</h3>
-                <p>Some content in menu 1.</p>
+            <div id="turnOrder" class="tab-pane fade in active">
+                <turn-order inline-template>
+                    <div>
+                        <h3>Turn Order</h3>
+                        <div class="col-xs-6">
+                            <div col-xs-12>Turn Sequence</div>
+                            <div class="col-xs-6 col-xs-offset-3">
+                                <div class="sequencePill">Purchase and Repair Units             </div>
+                                <div class="sequencePill">Combat Move (Powers at War only)      </div>
+                                <div class="sequencePill">Conduct Combat (Powers at War only)   </div>
+                                <div class="sequencePill">Noncombat Move                        </div>
+                                <div class="sequencePill">Mobilize New Units                    </div>
+                                <div class="sequencePill">Collect Income                        </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            Factions
+                            <div v-for="country in countries">
+                                <span class="col-xs-4">{{country.Name}}</span>
+                                <div class="col-xs-4">
+                                    <number-stepper :value="country.IPC"></number-stepper>
+                                </div>
+                                <br/><br/>
+                            </div>
+                        </div>
+                    </div>
+                </turn-order>
             </div>
-            <div id="battleResolver" class="tab-pane fade in active">
+            <div id="battleResolver" class="tab-pane fade">
                 <battle-resolver inline-template>
                     <div>
                         <div class="col-xs-12">
@@ -50,6 +74,12 @@
                                     </div>
                                     <span class="col-xs-2">{{unit.attackerHits}}</span>
                                 </div>
+                                <div class="row col-xs-12 totalFont">
+                                    <span class="col-xs-6">Totals:</span>
+                                    <div class="col-xs-4">
+                                    </div>
+                                    <span class="col-xs-2">{{ units | sum('attackerHits')}}</span>
+                                </div>
                             </div>
                             <div id="defender" class="col-xs-4">
                                 <b class="col-xs-6">Defender</b>
@@ -61,6 +91,12 @@
                                         <input class="form-control" type="text" v-model="unit.defenderQty" />
                                     </div>
                                     <span class="col-xs-2">{{unit.defenderHits}}</span>
+                                </div>
+                                <div class="row col-xs-12 totalFont">
+                                    <span class="col-xs-6">Totals:</span>
+                                    <div class="col-xs-4">
+                                    </div>
+                                    <span class="col-xs-2">{{ units | sum('defenderHits')}}</span>
                                 </div>
                             </div>
                             <div id="honestyCharty" class="col-xs-4">
@@ -96,10 +132,13 @@
         </div>
     </div>
     <!--Data files-->
-    <script src="Data/Units.js" ></script>
+    <script src="Data/Units.js"></script>
+    <script src="Data/Factions.js" ></script>
 
     <!--Components-->
     <script src="VueScripts/BattleResolver.js" type="text/javascript"></script>
+    <script src="VueScripts/NumberStepper.js" type="text/javascript"></script>
+    <script src="VueScripts/TurnOrder.js" type="text/javascript"></script>
 
     <!--Vue Bootstrapping-->
     <script src="VueScripts/VueStrap.js" type="text/javascript"></script>

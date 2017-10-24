@@ -70,6 +70,6 @@
         name: "Battleship",
         attack: 4,
         defend: 4
-    },
+    }
 
 ];

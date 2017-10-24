@@ -14,3 +14,16 @@
 #app .battleButton {
   float: right;
 }
+#app .totalFont {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+#app .sequencePill {
+  border-radius: 5px;
+  background-color: #7fc4ff;
+  padding: 15px;
+  margin: 20px;
+  text-align: center;
+  color: white;
+  font-size: 1.1em;
+}

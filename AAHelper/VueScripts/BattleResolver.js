@@ -2,7 +2,7 @@
     rolls: [1, 1, 1, 1, 1, 1],
     rollChart: null
 };
-var dieRoller = new Random(Random.engines.browserCrypto)
+var dieRoller = new Random(Random.engines.browserCrypto);
 $(function () {
     var ctx = document.getElementById("diceRolls").getContext('2d');
     battleStats.rollChart = new Chart(ctx, {
@@ -62,17 +62,17 @@ Vue.component('battle-resolver', {
                     var roll = this.rollDie();
                     if (roll <= this.units[i].attack)
                     {
-                        this.units[i].attackerHits++
+                        this.units[i].attackerHits++;
                     }
                 }
                 for (var def = 0; def < this.units[i].defenderQty; def++) {
-                    var roll = this.rollDie();
+                    roll = this.rollDie();
                     if (roll <= this.units[i].defend) {
-                        this.units[i].defenderHits++
+                        this.units[i].defenderHits++;
                     }
                 }
             }
-            battleStats.rollChart.options.scales.yAxes[0].ticks.beginAtZero = true
+            battleStats.rollChart.options.scales.yAxes[0].ticks.beginAtZero = true;
             battleStats.rollChart.update();
 
         },
@@ -107,9 +107,15 @@ Vue.component('battle-resolver', {
             }
         }
 
+    },
+    filters: {
+        sum: function (list, key) {
+            return list.reduce(function (total, item) {
+                return 1 * (total + item[key]);
+            }, 0);
+        }
     }
 });
-var globaldat;
 function createBattleState() {
     var data = {
         testString: 'This is actually a battle resolver. Peacefully.',
