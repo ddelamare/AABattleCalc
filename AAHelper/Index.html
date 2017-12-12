@@ -47,10 +47,11 @@
                             <div v-for="country in countries">
                                 <span class="col-xs-4">{{country.Name}}</span>
                                 <div class="col-xs-4">
-                                    <number-stepper :value="country.IPC"></number-stepper>
+                                    <number-stepper :value="country.IPC" :id="country.Name" :update="updateVal"></number-stepper>
                                 </div>
                                 <br/><br/>
                             </div>
+                            <button class="btn btn-danger ipcReset" v-on:click="reset">RESET</button>
                         </div>
                     </div>
                 </turn-order>

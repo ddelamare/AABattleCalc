@@ -35,3 +35,6 @@
   overflow-y: auto;
   height: 250px;
 }
+#app .ipcReset {
+  float: right;
+}
