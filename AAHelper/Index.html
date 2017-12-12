@@ -103,6 +103,12 @@
                             <div id="honestyCharty" class="col-xs-4">
                                 <canvas id="diceRolls"/>
                             </div>
+                            <div id="battleLog" class="col-xs-4">
+                                <b>Battle Log</b>
+                                <div id="logContent" class="log">
+                                    <span v-for="log in logs" class="logText">{{log}}<br /></span>
+                                </div>
+                            </div>
                             <div id="techs" class="col-xs-12">
                                 <b>Techs Active</b><br />
                                 <div class="cox-xs-1 col-md-3" v-for="tech in techs">

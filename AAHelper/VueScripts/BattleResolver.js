@@ -50,38 +50,76 @@ Vue.component('battle-resolver', {
     },
     methods: {
         simulateBattle: function (event) {
+            this.logs.push("-----------------Battle Start-----------------");
+
 
             this.clearHits();
             //TODO: Battleships?
-
             // Roll each unit's die
             for (var i = 0; i < this.units.length; i++)
             {
                 var supportedQty = 0;
+                if (this.units[i].attackerQty)
+                    this.logs.push("*****Attackers*****");
                 for (var atk = 0; atk < this.units[i].attackerQty; atk++)
                 {
                     var roll = this.rollDie();
                     var attackStrength = this.units[i].attack;
+                    var isSupported = false;
+                    var isHit = false;
                     if (this.isSupported(this.units[i], supportedQty))
                     {
                         attackStrength = attackStrength + 1;
                         supportedQty++;
-                        console.log("Unit supported!");
+                        isSupported = true;
                     }
                     if (roll <= attackStrength)
                     {
+                        isHit = true;
                         this.units[i].attackerHits++;
                     }
+                    var logString = this.units[i].name;
+                    if (isSupported)
+                    {
+                        logString += "(Supported)";
+                    }
+
+                    logString += " #" + (atk + 1) + " rolled " + roll + "/" + attackStrength + " and ";
+                    if (isHit) {
+                        logString += "hit.";
+                    }
+                    else {
+                        logString += "missed.";
+                    }
+
+                    this.logs.push(logString);
                 }
+                if (this.units[i].defenderQty)
+                    this.logs.push("*****Defenders*****");
                 for (var def = 0; def < this.units[i].defenderQty; def++) {
+                    var isHit = false
                     roll = this.rollDie();
+                    var defenderStrength = this.units[i].defend;
                     if (roll <= this.units[i].defend) {
                         this.units[i].defenderHits++;
+                        isHit = true;
                     }
+                    var logString = this.units[i].name;
+                    logString += " #" + (def + 1) + " rolled " + roll + "/" + defenderStrength + " and ";
+                    if (isHit) {
+                        logString += "hit.";
+                    }
+                    else {
+                        logString += "missed.";
+                    }
+
+                    this.logs.push(logString);
                 }
+
             }
             battleStats.rollChart.options.scales.yAxes[0].ticks.beginAtZero = true;
             battleStats.rollChart.update();
+            this.logs.push("-----------------Battle End-----------------");
 
         },
         rollDie: function () {
@@ -157,7 +195,8 @@ function createBattleState() {
                 name: "22222222"
             }
         ],
-        useCryptoRand: false
+        useCryptoRand: false,
+        logs: []
     };
     data.units = $.extend([], Units);// Clone units data
     console.log(data.units);
