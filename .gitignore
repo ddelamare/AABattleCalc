@@ -190,3 +190,6 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 .vs/
+AAHelper/Scripts/underscore.min.map
+AAHelper/Scripts/underscore.min.js
+AAHelper/Scripts/underscore.js

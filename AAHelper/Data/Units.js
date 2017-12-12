@@ -27,17 +27,18 @@
         defend: 1
     },
     {
-        name: "Fighters",
+        name: "Fighter",
         attack: 3,
         defend: 4
     },
     {
-        name: "Tac. Bombers",
+        name: "Tac. Bomber",
         attack: 3,
-        defend: 3
+        defend: 3,
+        supportedBy: ["Fighter", "Tank"]
     },
     {
-        name: "Bombers",
+        name: "Bomber",
         attack: 4,
         defend: 1
     },

@@ -57,10 +57,18 @@ Vue.component('battle-resolver', {
             // Roll each unit's die
             for (var i = 0; i < this.units.length; i++)
             {
+                var supportedQty = 0;
                 for (var atk = 0; atk < this.units[i].attackerQty; atk++)
                 {
                     var roll = this.rollDie();
-                    if (roll <= this.units[i].attack)
+                    var attackStrength = this.units[i].attack;
+                    if (this.isSupported(this.units[i], supportedQty))
+                    {
+                        attackStrength = attackStrength + 1;
+                        supportedQty++;
+                        console.log("Unit supported!");
+                    }
+                    if (roll <= attackStrength)
                     {
                         this.units[i].attackerHits++;
                     }
@@ -105,6 +113,22 @@ Vue.component('battle-resolver', {
                 this.units[i].attackerHits = 0;
                 this.units[i].defenderHits = 0;
             }
+        },
+        isSupported: function (unitClass, supportedSoFar) {
+            // Checks if there are support units in the battle and if the support limit has been reached.
+            // That is, in the case where there are more supportable units than supporting units.
+            if (!unitClass.supportedBy || unitClass.supportedBy.length == 0)
+            {
+                // If unit is not supportable, return false
+                return false;
+            }
+
+            var totalSupportUnits = 0;
+            // Count total units that are available to support
+            var supportingUnitsCount = _.filter(this.units, function (u) { return unitClass.supportedBy.includes(u.name); })
+                .reduce(function (left, right) { return left + parseInt(right.attackerQty) }, 0);
+            console.log("Units found to support: " + supportingUnitsCount);
+            return supportedSoFar < supportingUnitsCount;
         }
 
     },
@@ -140,9 +164,9 @@ function createBattleState() {
     // Do per row inits
     for (var i = 0; i < data.units.length; i++)
     {
-        data.units[i].attackerQty  = '0';
+        data.units[i].attackerQty  = 0;
         data.units[i].attackerHits = 0;
-        data.units[i].defenderQty  = '0';
+        data.units[i].defenderQty  = 0;
         data.units[i].defenderHits = 0;
     }
     return data;
