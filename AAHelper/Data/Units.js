@@ -14,7 +14,7 @@
         name: "Mech. Infantry",
         attack: 1,
         defend: 2,
-        supportedBy: ["Artillery","Tank"]
+        supportedBy: ["Artillery"]
     },
     {
         name: "Tank",
