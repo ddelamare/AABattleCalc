@@ -4,12 +4,13 @@
     <meta charset="utf-8" />
     <script src="https://unpkg.com/vue"></script>
     <link rel="stylesheet" href="LESS/site.min.css" />
-    <link rel="stylesheet" href="Content/bootstrap.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+    <link rel="stylesheet" href="Content/bootstrap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.0/underscore-min.js"></script>
     <script src="Scripts/random.min.js"></script> <!--https://github.com/ckknight/random-js-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.js"></script>
+    <script src="Data/TurnPhases.js"></script>
     <title>AA Battle Resolver</title>
 </head>
 <body>
@@ -30,27 +31,28 @@
             <div id="turnOrder" class="tab-pane fade in active">
                 <turn-order inline-template>
                     <div>
-                        <h3>Turn Order</h3>
+                        <h3>Turn:{{turnCount}}</h3>
                         <div class="col-xs-6">
                             <div col-xs-12>Turn Sequence</div>
                             <div class="col-xs-6 col-xs-offset-3">
-                                <div class="sequencePill">Purchase and Repair Units             </div>
-                                <div class="sequencePill">Combat Move (Powers at War only)      </div>
-                                <div class="sequencePill">Conduct Combat (Powers at War only)   </div>
-                                <div class="sequencePill">Noncombat Move                        </div>
-                                <div class="sequencePill">Mobilize New Units                    </div>
-                                <div class="sequencePill">Collect Income                        </div>
+                                <div v-for="p in phases">
+                                    <img class="phaseArrow" src="Content/arrow.png" v-if="phase == p.id" />
+                                    <div class="sequencePill">{{p.name}}</div>
+                                </div>
+                                <button class="btn btn-success" v-on:click="nextPhase">Next Phase</button>
                             </div>
                         </div>
                         <div class="col-xs-6">
                             Factions
-                            <div v-for="country in countries">
+                            <div v-for="country in countries" style="padding-left: 0px;">
+                                <img class="factionArrow" src="Content/arrow.png" v-if="faction == country.id" />
                                 <span class="col-xs-4">{{country.Name}}</span>
-                                <div class="col-xs-4">
+                                <div class="col-xs-4" style="float:right">
                                     <number-stepper :value="country.IPC" :id="country.Name" :update="updateVal"></number-stepper>
                                 </div>
-                                <br/><br/>
+                                <br /><br />
                             </div>
+                            <button class="btn btn-warning" v-on:click="nextFaction">Next Faction</button>
                             <button class="btn btn-danger ipcReset" v-on:click="reset">RESET</button>
                         </div>
                     </div>
