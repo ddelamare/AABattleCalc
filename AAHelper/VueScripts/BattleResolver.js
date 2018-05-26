@@ -54,23 +54,38 @@ Vue.component('battle-resolver', {
 
 
             this.clearHits();
-            //TODO: Battleships?
+            // Sets per unit supports
+            for (var i = 0; i < this.units.length; i++) {
+                this.units[i].supportsLeft = this.units[i].attackerQty;
+            }
+
             // Roll each unit's die
             for (var i = 0; i < this.units.length; i++)
             {
-                var supportedQty = 0;
+                var currentUnit = $.extend({},this.units[i]);
+                var enabledTechs = _.where(this.techs, { enabled: true });
+                var applicableTechs = _.filter(enabledTechs, function (t) {
+                    return t.units.includes(currentUnit.name)
+                });
+
+                if (applicableTechs.length) {
+                    this.upgradeUnit(currentUnit, applicableTechs);
+                }
+
+
                 if (this.units[i].attackerQty)
                     this.logs.push("*****Attackers*****");
                 for (var atk = 0; atk < this.units[i].attackerQty; atk++)
                 {
                     var roll = this.rollDie();
-                    var attackStrength = this.units[i].attack;
+                    var attackStrength = currentUnit.attack;
+
                     var isSupported = false;
                     var isHit = false;
-                    if (this.isSupported(this.units[i], supportedQty))
+
+                    if (this.isSupported(currentUnit))
                     {
                         attackStrength = attackStrength + 1;
-                        supportedQty++;
                         isSupported = true;
                     }
                     if (roll <= attackStrength)
@@ -94,13 +109,18 @@ Vue.component('battle-resolver', {
 
                     this.logs.push(logString);
                 }
+
+                // Reset unit
+                currentUnit = $.extend({}, this.units[i]);
+
+                // Defend
                 if (this.units[i].defenderQty)
                     this.logs.push("*****Defenders*****");
                 for (var def = 0; def < this.units[i].defenderQty; def++) {
                     var isHit = false
                     roll = this.rollDie();
-                    var defenderStrength = this.units[i].defend;
-                    if (roll <= this.units[i].defend) {
+                    var defenderStrength = currentUnit.defend;
+                    if (roll <= currentUnit.defend) {
                         this.units[i].defenderHits++;
                         isHit = true;
                     }
@@ -161,12 +181,32 @@ Vue.component('battle-resolver', {
                 return false;
             }
 
-            var totalSupportUnits = 0;
             // Count total units that are available to support
-            var supportingUnitsCount = _.filter(this.units, function (u) { return unitClass.supportedBy.includes(u.name); })
-                .reduce(function (left, right) { return left + parseInt(right.attackerQty) }, 0);
-            console.log("Units found to support: " + supportingUnitsCount);
-            return supportedSoFar < supportingUnitsCount;
+            //var supportingUnitsCount = _.filter(this.units, function (u) { return unitClass.supportedBy.includes(u.name); })
+            //    .reduce(function (left, right) { return left + parseInt(right.attackerQty) }, 0);
+            var unitsThatCanSupport = _.filter(this.units, function (un) { return un.supportsLeft > 0 && unitClass.supportedBy.includes(un.name) });
+            if (unitsThatCanSupport.length) {
+                console.log("Units found to support: " + _.reduce(unitsThatCanSupport, function (left, right) { return left + parseInt(right.supportsLeft) }, 0));
+                unitsThatCanSupport[0].supportsLeft = unitsThatCanSupport[0].supportsLeft - 1;
+            }
+            return unitsThatCanSupport.length;
+        },
+        upgradeUnit: function (unitClass, techs) {
+            // Combine all active techs with current unit.
+            for (var i = 0; i < techs.length; i++) {
+                var tech = techs[i];
+                for (var buff in tech.buffs) {
+                    // Filter out prototype junk
+                    if (tech.buffs.hasOwnProperty(buff)) {
+                        if (_.isArray(tech.buffs[buff])) {
+                            unitClass[buff] = _.union(unitClass[buff], tech.buffs[buff]);
+                        }
+                        else {
+                            unitClass[buff] = unitClass[buff] + tech.buffs[buff];
+                        }
+                    }
+                }
+            }
         }
 
     },
@@ -181,20 +221,7 @@ Vue.component('battle-resolver', {
 function createBattleState() {
     var data = {
         testString: 'This is actually a battle resolver. Peacefully.',
-        techs: [
-            {
-                name:"1111111"
-            },
-            {
-                name:"22222222"
-            },
-            {
-                name: "1111111"
-            },
-            {
-                name: "22222222"
-            }
-        ],
+        techs: Techs,
         useCryptoRand: false,
         logs: []
     };
