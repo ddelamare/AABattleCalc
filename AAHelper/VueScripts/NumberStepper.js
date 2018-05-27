@@ -20,7 +20,8 @@
         internalValue: {
             handler: function (oldVal, newVal) {
             if (this.update)
-                this.update(this.id, this.internalValue );
+                    this.update(this.id, this.internalValue);
+            this.internalValue = parseInt(this.internalValue);
             }
         }
     }

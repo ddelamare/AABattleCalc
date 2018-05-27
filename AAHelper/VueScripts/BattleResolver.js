@@ -54,16 +54,23 @@ Vue.component('battle-resolver', {
 
 
             this.clearHits();
+            var enabledTechs = _.where(this.techs, { enabled: true });
+
             // Sets per unit supports
             for (var i = 0; i < this.units.length; i++) {
                 this.units[i].supportsLeft = this.units[i].attackerQty;
+            }
+
+            var advArt = _.filter(enabledTechs, function (tech) { return tech.buffs.doubleSupport });
+            if (advArt.length > 0) {
+                // Hack for speed. Only applies to artillery
+                this.units[1].supportsLeft = this.units[1].supportsLeft * 2;
             }
 
             // Roll each unit's die
             for (var i = 0; i < this.units.length; i++)
             {
                 var currentUnit = $.extend({},this.units[i]);
-                var enabledTechs = _.where(this.techs, { enabled: true });
                 var applicableTechs = _.filter(enabledTechs, function (t) {
                     return t.units.includes(currentUnit.name)
                 });
@@ -140,7 +147,10 @@ Vue.component('battle-resolver', {
             battleStats.rollChart.options.scales.yAxes[0].ticks.beginAtZero = true;
             battleStats.rollChart.update();
             this.logs.push("-----------------Battle End-----------------");
-
+            _.defer(function(){
+                var battleLog = document.getElementById('logContent');
+                battleLog.scrollTop = battleLog.scrollHeight;
+            });
         },
         rollDie: function () {
             var result = 0;
